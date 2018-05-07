@@ -1,12 +1,16 @@
 package com.duyi.edu.server.socket;
 
+import com.duyi.edu.server.config.ConfigName;
 import com.duyi.edu.server.config.ConfigService;
+import com.duyi.edu.server.http.HttpHandler;
+import com.duyi.edu.server.http.HttpRequest;
+import com.duyi.edu.server.http.HttpResponse;
+import com.duyi.edu.server.log.LogService;
+import com.duyi.edu.server.service.CommonRequestService;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by changlifeng on 2018/1/17.
@@ -14,18 +18,19 @@ import java.util.Map;
 public class SocketService {
 
     private static ServerSocket s;
+    private static LogService log = new LogService();
 
     public static void start() throws IOException {
 
         Socket socket = null;
         try {
-            s = new ServerSocket(Integer.parseInt(ConfigService.getConfig("port")));
+            s = new ServerSocket(Integer.parseInt(ConfigService.getConfig(ConfigName.PORT)));
             while (true) {
                 socket = s.accept();
                 new ServerThread(socket).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         }
 
     }
@@ -33,6 +38,7 @@ public class SocketService {
 
 class ServerThread extends Thread {
 
+    private static LogService log = new LogService();
     private Socket socket;
 
     ServerThread(Socket socket) {
@@ -42,81 +48,53 @@ class ServerThread extends Thread {
     @Override
     public void run() {
         try {
-            InputStreamReader is = new InputStreamReader(socket.getInputStream());
-            PrintStream out;
-            out = new PrintStream(socket.getOutputStream());
-
-            Map<String, String> request = analyzeRequest(socket);
-
-            action(request, out);
-
-            is.close();
-            out.flush();
-            out.close();
-            socket.close();
+            String request = getRequest(socket);
+            HttpRequest httpRequest = HttpHandler.analysis(request);
+            HttpResponse httpResponse = new HttpResponse(socket.getOutputStream());
+            CommonRequestService.action(httpRequest, httpResponse);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+//            try {
+//                socket.getInputStream().close();
+//            } catch (IOException e) {
+//                try {
+//                    e.printStackTrace(new PrintStream(log.getOutputStream(), true));
+//                } catch (FileNotFoundException e1) {
+//                }
+//            }
+            try {
+                if (!socket.isOutputShutdown()) {
+                    socket.getOutputStream().close();
+                }
+            } catch (IOException e) {
+                try {
+                    e.printStackTrace(new PrintStream(log.getOutputStream(), true));
+                } catch (FileNotFoundException e1) {
+                }
+            }
+            try {
+                socket.close();
+            } catch (IOException e) {
+                try {
+                    e.printStackTrace(new PrintStream(log.getOutputStream(), true));
+                } catch (FileNotFoundException e1) {
+                }
+            }
         }
     }
 
-    private void action(Map<String, String> request, PrintStream out) throws Exception {
-        String refer = request.get("referer");
-        normalResp(out, "./test.html");
-    }
-
-    private static void normalResp(PrintStream out, String path) throws Exception {
-
-        out.println("HTTP/1.1 200 OK");
-        out.println("Content-Type:text/html;charset:utf-8");
-        out.println();
-
-        StringBuilder page = ServerThread.getPage(path);
-        out.println(page.toString());
-    }
-
-    private static void errorResp(PrintStream out) throws Exception {
-
-        out.println("HTTP/1.1 200 OK");
-        out.println("Content-Type:text/html;charset:utf-8");
-        out.println();
-
-        out.println("<html><body>Not Found</body</html>");
-
-    }
-
-    private Map<String, String> analyzeRequest(Socket socket) throws IOException {
-        Map<String, String> result = new HashMap<String, String>();
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        while (true) {
-            String temp = br.readLine();
-            if (temp == null || "".equals(temp)) {
-                break;
-            }
-            if (!temp.contains(":")) {
-                continue;
-            }
-            int p = temp.indexOf(":");
-            System.out.println(temp);
-            result.put(temp.trim().substring(0, p).trim().toLowerCase(), temp.trim().substring(p + 1, temp.length()).trim());
-            System.out.println(temp.trim().substring(0, p).trim().toLowerCase() + ":" + temp.trim().substring(p + 1, temp.length()).trim());
-        }
-
-        return result;
-    }
-
-    private static StringBuilder getPage(String path) throws Exception {
+    private String getRequest(Socket socket) throws IOException {
         StringBuilder result = new StringBuilder();
-        File file = new File(path);
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        InputStream inputStream = socket.getInputStream();
+        byte[] bytes = new byte[64];
         while (true) {
-            String temp = br.readLine();
-            if (temp == null || "".equals(temp)) {
+            int k = inputStream.read(bytes);
+            if (k < bytes.length) {
                 break;
             }
-            result.append(temp);
-            result.append("\r\n");
+            result.append(new String(bytes));
         }
-        br.close();
-        return result;
+        return result.toString();
     }
 }

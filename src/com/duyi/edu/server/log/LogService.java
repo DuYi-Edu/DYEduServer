@@ -3,9 +3,7 @@ package com.duyi.edu.server.log;
 import com.duyi.edu.server.config.ConfigName;
 import com.duyi.edu.server.config.ConfigService;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,6 +39,11 @@ public class LogService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public OutputStream getOutputStream() throws FileNotFoundException {
+        FileOutputStream fileOutputStream = new FileOutputStream(logFile, true);
+        return fileOutputStream;
     }
 
     private String logFormat(String type, String log) {
