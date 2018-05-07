@@ -18,7 +18,7 @@ public class LogService {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static void init() throws IOException {
-        logPath = ConfigService.getConfig(ConfigName.LOG_PATH, "dy_edu_server.log");
+        logPath = ConfigService.getConfig(ConfigName.LOG_PATH, "./log/dy_edu_server.log");
         logFile = new File(logPath);
         FileOutputStream fileOutputStream = new FileOutputStream(logFile, true);
         fileOutputStream.close();
