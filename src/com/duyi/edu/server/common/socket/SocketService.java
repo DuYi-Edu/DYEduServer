@@ -8,7 +8,6 @@ import com.duyi.edu.server.common.http.HttpHandler;
 import com.duyi.edu.server.common.http.HttpRequest;
 import com.duyi.edu.server.common.http.HttpResponse;
 import com.duyi.edu.server.common.log.LogService;
-import com.duyi.edu.server.simple.service.CommonRequestService;
 
 import java.io.*;
 import java.net.ServerSocket;

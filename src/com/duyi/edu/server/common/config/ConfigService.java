@@ -13,7 +13,7 @@ public class ConfigService {
 
     public static void init() throws IOException, InstantiationException, IllegalAccessException, ConfigInitException {
         config = new Properties();
-        config.load(new FileInputStream("config.properties"));
+        config.load(new FileInputStream("./conf/config.properties"));
         checkConfig();
     }
 
