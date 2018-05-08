@@ -1,4 +1,4 @@
-package com.duyi.edu.server.config;
+package com.duyi.edu.server.common.config;
 
 public class ConfigInitException extends Exception {
 

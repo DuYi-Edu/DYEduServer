@@ -1,8 +1,9 @@
 package com.duyi.edu.server;
 
-import com.duyi.edu.server.config.ConfigService;
-import com.duyi.edu.server.log.LogService;
-import com.duyi.edu.server.socket.SocketService;
+import com.duyi.edu.server.common.config.ConfigService;
+import com.duyi.edu.server.common.log.LogService;
+import com.duyi.edu.server.common.socket.SocketService;
+
 import java.io.IOException;
 
 public class Main {

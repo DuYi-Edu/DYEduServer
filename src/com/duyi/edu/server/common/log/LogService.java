@@ -1,7 +1,8 @@
-package com.duyi.edu.server.log;
+package com.duyi.edu.server.common.log;
 
-import com.duyi.edu.server.config.ConfigName;
-import com.duyi.edu.server.config.ConfigService;
+
+import com.duyi.edu.server.common.config.ConfigName;
+import com.duyi.edu.server.common.config.ConfigService;
 
 import java.io.*;
 import java.text.SimpleDateFormat;

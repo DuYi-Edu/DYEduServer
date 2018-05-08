@@ -1,4 +1,4 @@
-package com.duyi.edu.server.http;
+package com.duyi.edu.server.common.http;
 
 import java.util.HashMap;
 import java.util.Map;

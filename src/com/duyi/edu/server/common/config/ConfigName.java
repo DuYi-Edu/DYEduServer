@@ -1,4 +1,4 @@
-package com.duyi.edu.server.config;
+package com.duyi.edu.server.common.config;
 
 public class ConfigName {
 
@@ -10,6 +10,8 @@ public class ConfigName {
     public static String MAX_THREAD_SIZE = "max_thread_size";
     @Must
     public static String WAIT_QUEUE_SIZE = "wait_queue_size";
+    @Must
+    public static String PATTERN = "pattern";
 
     public static String LOG_PATH = "log_path";
     public static String BASE_PATH = "base_path";
@@ -17,6 +19,8 @@ public class ConfigName {
 
     public static String PAGE_404 = "page_404";
     public static String PAGE_500 = "page_500";
+
+
 
 
 }

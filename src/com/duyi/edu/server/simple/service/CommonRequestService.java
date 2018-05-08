@@ -1,9 +1,9 @@
-package com.duyi.edu.server.service;
+package com.duyi.edu.server.simple.service;
 
-import com.duyi.edu.server.config.ConfigName;
-import com.duyi.edu.server.config.ConfigService;
-import com.duyi.edu.server.http.HttpRequest;
-import com.duyi.edu.server.http.HttpResponse;
+import com.duyi.edu.server.common.config.ConfigName;
+import com.duyi.edu.server.common.config.ConfigService;
+import com.duyi.edu.server.common.http.HttpRequest;
+import com.duyi.edu.server.common.http.HttpResponse;
 
 import java.io.File;
 import java.io.FileInputStream;
