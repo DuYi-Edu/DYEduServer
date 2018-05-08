@@ -35,10 +35,12 @@ public class ConfigService {
             if (must == null) {
                 continue;
             }
-            String key = (String) field.get(ConfigName.class.newInstance());
-            String temp = getConfig(key);
-            if (temp == null) {
-                notExistConfig.add(key);
+            if ("".equals(must.preConfig()) || getConfig(must.preConfig()) != null && getConfig(must.preConfig()).equals(must.preValue())) {
+                String key = (String) field.get(ConfigName.class.newInstance());
+                String temp = getConfig(key);
+                if (temp == null) {
+                    notExistConfig.add(key);
+                }
             }
         }
         if (notExistConfig.size() > 0) {
@@ -49,8 +51,6 @@ public class ConfigService {
                 stringBuffer.append(" ");
             }
             throw new ConfigInitException(stringBuffer.toString());
-        } else {
-
         }
     }
 
