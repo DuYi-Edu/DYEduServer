@@ -1,14 +1,11 @@
-package com.duyi.edu.server.container;
+package com.duyi.edu.server.common.loader;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLStreamHandler;
+import java.net.*;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -108,33 +105,71 @@ public class ClassUtil {
 //            System.out.println(clazz.getName());
 //        }
 
-        String path = System.getProperty("user.dir") + File.separator+"classes";
-        File classpath = new File(path);
-        URL[] urls = new URL[1];
-        URLClassLoader loader = null;
-        try {
-            String repository =(new URL("file", null, classpath.getCanonicalPath() + File.separator)).toString() ;
-            System.out.println(repository);
-            URLStreamHandler streamHandler = null;
-            urls[0] = new URL(null, repository, streamHandler);
-            loader = new URLClassLoader(urls);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        Class clazz = null;
-        try {
-            clazz = loader.loadClass("com.duyi.test.Test");
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        String path = System.getProperty("user.dir") + File.separator+"classes";
+//        File classpath = new File(path);
+//        URL[] urls = new URL[1];
+//        URLClassLoader loader = null;
+//        try {
+//            String repository =(new URL("file", null, classpath.getCanonicalPath() + File.separator)).toString() ;
+//            System.out.println(repository);
+//            URLStreamHandler streamHandler = null;
+//            urls[0] = new URL(null, repository, streamHandler);
+//            loader = new URLClassLoader(urls);
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        Class clazz = null;
+//        try {
+//            clazz = loader.loadClass("com.duyi.test.Test");
+//        } catch (ClassNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(clazz);
+//        Method[] methods = clazz.getDeclaredMethods();
+//        for (Method method : methods) {
+//            method.setAccessible(true);
+//            method.invoke(clazz.newInstance());
+//        }
 
-        System.out.println(clazz);
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            method.setAccessible(true);
-            method.invoke(clazz.newInstance());
+//        URLClassLoader urlClassLoader = getURLClassLoader();
+//        URL[] urls = urlClassLoader.getURLs();
+//        for (URL url : urls) {
+//            System.out.println(url.getPath());
+//        }
+//        urlClassLoader.loadClass(urls[0]);
+//        String[] paths = listFileNames();
+//        for (String path : paths) {
+//            System.out.println(path);
+//        }
+    }
+
+    private static URL lib_url = ClassLoader.getSystemClassLoader().getResource("./lib");
+    private static URLClassLoader loader = null;
+
+    public static URLClassLoader getURLClassLoader(){
+
+        if(loader == null){
+            String fileNames[] = listFileNames();
+            if(fileNames != null && fileNames.length > 0){
+                URL urls[] = new URL[fileNames.length];
+                for(int i = 0;i < fileNames.length;i++){
+                    try {
+                        urls[i] = new URL("file:"+System.getProperty("user.dir") + "/lib/"+fileNames[i]);
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException("加载lib目录下jar文件出错！",e);
+                    }
+                }
+                loader = new URLClassLoader(urls);
+            }
         }
+        return loader;
+    }
+
+    private static String[] listFileNames(){
+        File file_directory = new File("./lib");
+        return file_directory.list();
     }
 }
